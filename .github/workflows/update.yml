@@ -18,36 +18,58 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  # 시장별로 다른 서버에서 동시에 수집 (서버마다 하이퍼리퀴드 호출 한도가 따로라 빠름)
+  fetch:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        dex: [main, xyz, io]
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: 수집 (${{ matrix.dex }})
+        run: python build.py fetch part-${{ matrix.dex }}.json --dex ${{ matrix.dex }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: part-${{ matrix.dex }}
+          path: part-${{ matrix.dex }}.json
+          retention-days: 1
 
+  build:
+    needs: fetch
+    if: ${{ !cancelled() }}   # 주식·비상장 수집이 실패해도 코인만으로 배포
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: part-*
+          merge-multiple: true
+          path: parts
       - name: 직전 데이터 받기 (변동 비교용)
         run: |
           curl -sfL -o prev.json "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/traders.json" \
             && echo "직전 데이터 있음" || echo "직전 데이터 없음 (첫 실행)"
-
-      - name: 하이퍼리퀴드 수집
-        run: python build.py site --prev prev.json
-
+      - name: 합치기
+        run: python build.py merge site --prev prev.json parts/*.json
       - name: 결과 점검
         run: |
           python - <<'PY'
           import json, sys
           d = json.load(open("site/data.json"))
-          print("tracked", d["tracked"], "coins", len(d["coins"]), "feed", len(d["feed"]), "failed", d["failed"])
+          print("dexes", d["dexes"], "tracked", d["tracked"], "coins", len(d["coins"]), "feed", len(d["feed"]), "failed", d["failed"])
           if d["tracked"] < 3000 or len(d["coins"]) < 50:
               sys.exit("수집 결과가 비정상적으로 적어 배포하지 않습니다")
           PY
-
       - uses: actions/configure-pages@v5
-
       - uses: actions/upload-pages-artifact@v4
         with:
           path: site
