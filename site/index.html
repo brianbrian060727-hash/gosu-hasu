@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>멍청한 돈 한국어판</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: 신문 그래픽 데스크 — 결론이 제목, 숫자는 정확하게, 장식 없음
+   IDEA: 과학 도판처럼 두 잉크(프러시안=고수, 카민=하수)로만 찍은 시장 단면
+   PICTURE: 코인별 롱 비중 덤벨 차트 — 파란 점(스마트)과 빨간 점(멍청)이 50% 선 양쪽으로 갈라지는 곳
+   COLOUR and TYPE: 흰 바탕 #10131a 잉크, 프러시안 #0b4f8a·카민 #c1121f / Noto Serif KR 제목 + IBM Plex Sans KR 본문
+   LAYOUT: 상단 내비 → 결론 제목+핵심 숫자 → 차트 → 표, 600px 이하 한 줄로 쌓기 */
+:root{color-scheme:light dark;--bg:light-dark(#fff,#0f1217);--ink:light-dark(#10131a,#e8eaee);--mute:light-dark(#5b616e,#9aa1ad);--rule:light-dark(#e3e5ea,#262b34);--soft:light-dark(#f5f6f8,#171b22);
+--sm:light-dark(#0b4f8a,#6aaef0);--du:light-dark(#c1121f,#ff6670);--smS:light-dark(#d5e3f1,#1b3550);--duS:light-dark(#f6d6d8,#4a1c21)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "IBM Plex Sans KR",system-ui,sans-serif;overflow-x:clip;font-variant-numeric:tabular-nums}
+a{color:inherit}
+.band{padding:clamp(20px,3.4vw,48px) max(5vw,16px)}.wrap{max-width:1240px;margin:0 auto}
+header{border-bottom:1px solid var(--rule);position:sticky;top:0;background:var(--bg);z-index:5}
+header .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:6px 22px;padding:10px max(5vw,16px)}
+.logo{font:700 20px "Noto Serif KR",serif;text-decoration:none;display:flex;gap:8px;align-items:center}
+.logo i{display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--sm);box-shadow:9px 0 0 var(--du);margin-right:9px}
+nav{display:flex;flex-wrap:wrap;gap:2px}
+nav a{text-decoration:none;padding:10px 12px;border-radius:8px;color:var(--mute);font-weight:500;min-height:44px;display:flex;align-items:center}
+nav a.on{color:var(--ink);background:var(--soft)}
+nav a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,tr[tabindex]:focus-visible{outline:2px solid var(--sm);outline-offset:2px}
+.ticker{display:flex;gap:18px;overflow-x:auto;padding:8px max(5vw,16px);font-size:13px;border-bottom:1px solid var(--rule);white-space:nowrap;color:var(--mute)}
+.ticker span{flex:none}.ticker b{color:var(--ink);font-weight:600}.ticker a{text-decoration:none}
+h1{font:700 clamp(28px,4.2vw,46px)/1.12 "Noto Serif KR",serif;margin:0 0 10px;text-wrap:balance}
+h2{font:700 22px/1.3 "Noto Serif KR",serif;margin:0 0 12px}
+.sub{color:var(--mute);margin:0 0 20px;max-width:70ch}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0;border:1px solid var(--rule);border-radius:10px;overflow:hidden;margin:0 0 24px}
+.kpi{outline:1px solid var(--rule);padding:14px 16px}.kpi small{display:block;color:var(--mute);font-size:13px}.kpi b{font-size:clamp(19px,2.6vw,28px);font-weight:600;overflow-wrap:anywhere}
+.fig{position:relative;min-height:340px}.fig>svg{position:absolute;inset:0;width:100%;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--mute);margin:8px 0 0}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:-1px;margin-right:6px}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px}
+input,select{font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:1px solid var(--rule);border-radius:8px;padding:9px 12px;min-height:44px}
+input{flex:1 1 220px;max-width:340px}
+.chip{font:inherit;font-size:14px;border:1px solid var(--rule);background:var(--bg);color:var(--ink);border-radius:999px;padding:8px 14px;min-height:44px;cursor:pointer}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{font-weight:500;color:var(--mute);text-align:left;padding:8px 10px;border-bottom:1px solid var(--ink);white-space:nowrap;cursor:default}
+th[data-k]{cursor:pointer}th[data-k]:hover{color:var(--ink)}
+td{padding:9px 10px;border-bottom:1px solid var(--rule);white-space:nowrap}
+.n{text-align:right}tr[data-go]{cursor:pointer}tr[data-go]:hover td{background:var(--soft)}
+.coin{font-weight:600}.addr{font-size:13px;color:var(--mute)}
+.bar{display:inline-flex;width:90px;height:8px;border-radius:4px;overflow:hidden;vertical-align:middle;margin-right:8px}
+.bar span{display:block;height:100%}
+.pos{color:var(--sm)}.neg{color:var(--du)}
+.side{font-weight:600}.L{color:var(--ink)}.S{color:var(--mute)}
+.tag{display:inline-block;font-size:12px;padding:1px 8px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.t-genius,.t-smart{color:var(--sm)}.t-stupid,.t-worst{color:var(--du)}.t-genius,.t-worst{background:currentColor}.t-genius span,.t-worst span{color:var(--bg)}
+.sig-L{color:var(--sm);font-weight:600}.sig-S{color:var(--du);font-weight:600}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:14px;margin:0 0 28px}
+.card{border:1px solid var(--rule);border-radius:10px;padding:16px}
+.card h3{margin:0 0 4px;font-size:16px}.card p{margin:0 0 10px;color:var(--mute);font-size:13px}
+.split{display:flex;height:14px;border-radius:7px;overflow:hidden;background:var(--soft);margin:8px 0}
+.split span{height:100%}
+.row2{display:flex;flex-wrap:wrap;justify-content:space-between;font-size:14px;gap:2px 12px}.row2 span{white-space:nowrap}
+.more{display:block;margin:14px auto 0;font:inherit;padding:10px 20px;border-radius:8px;border:1px solid var(--rule);background:var(--bg);color:var(--ink);min-height:44px;cursor:pointer}
+.note{font-size:13px;color:var(--mute);margin-top:16px}
+.empty{padding:40px 0;color:var(--mute);text-align:center}
+.feed li{padding:10px 0;border-bottom:1px solid var(--rule);list-style:none;display:flex;gap:10px;flex-wrap:wrap;align-items:baseline}
+.feed{padding:0;margin:0}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr);gap:36px}
+.prose{max-width:70ch}.prose li{margin-bottom:6px}
+footer{border-top:1px solid var(--rule);color:var(--mute);font-size:13px}
+@media(max-width:600px){header{position:static}}
+@media(max-width:600px){table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--rule)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:8em;text-align:start;white-space:normal}.stack td::before{content:attr(data-l);float:inline-start;width:7.5em;margin-inline-start:-8em;white-space:normal;color:var(--mute)}.stack td:empty{display:none}.bar{width:64px}nav a{padding:8px 9px}}
+@media(prefers-reduced-motion:no-preference){.fig circle{transition:cx .5s ease}}
+</style>
+<script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
+</head>
+<body>
+<header><div class="wrap">
+<a class="logo" href="#assets"><i></i>멍청한 돈</a>
+<nav id="nav"><a href="#assets" data-r="assets">코인</a><a href="#live" data-r="live">실시간 체결<b id="badge" style="color:var(--du)"></b></a><a href="#traders" data-r="traders">트레이더 랭킹</a><a href="#moves" data-r="moves">최근 매매·청산 위험</a><a href="#about" data-r="about">산정 기준</a></nav>
+</div></header>
+<div class="ticker" id="ticker"></div>
+<main id="app"><div class="band"><div class="wrap empty">데이터를 불러오는 중…</div></div></main>
+<footer class="band"><div class="wrap">하이퍼리퀴드 공개 데이터를 자동으로 모아 정리한 페이지입니다. 투자 조언이나 매매 권유가 아닙니다. 원작: <a href="https://www.stupidmoney.io">stupidmoney.io</a></div></footer>
+<script>
+{
+const TN={genius:'초고수',smart:'고수',stupid:'하수',worst:'호구',mid:'일반'};
+const TD={genius:'누적 손익 $2M 이상',smart:'누적 손익 $200K~$2M',stupid:'누적 손익 −$100K~−$1M',worst:'누적 손익 −$1M 이하'};
+const TIERS=['genius','smart','stupid','worst'];
+let D=null,T=null,TL=null;
+const app=document.getElementById('app');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $m=(v,sign)=>{const a=Math.abs(v),s=v<0?'−':(sign&&v>0?'+':'');const f=a>=1e9?(a/1e9).toFixed(2)+'B':a>=1e6?(a/1e6).toFixed(2)+'M':a>=1e3?(a/1e3).toFixed(1).replace(/\.0$/,'')+'K':a.toFixed(0);return s+'$'+f};
+const px=v=>{if(!v)return '—';const a=Math.abs(v);return '$'+(a>=1000?v.toLocaleString('en-US',{maximumFractionDigits:1}):a>=1?v.toFixed(a>=100?2:4):Number(v.toPrecision(5)).toString())};
+const pct=(v,d=1)=>(v>0?'+':v<0?'−':'')+Math.abs(v).toFixed(d)+'%';
+const cls=v=>v>0?'pos':v<0?'neg':'';
+const short=a=>a.slice(0,6)+'…'+a.slice(-4);
+const when=t=>new Date(t*1000).toLocaleString('ko-KR',{month:'long',day:'numeric',hour:'numeric',minute:'2-digit'});
+const tag=t=>`<span class="tag t-${t}"><span>${TN[t]}</span></span>`;
+const who=i=>{const r=D.tr[i];return `<a href="#trader-${r[0]}" onclick="event.stopPropagation()">${r[1]?esc(r[1]):short(r[0])}</a> <span class="addr">#${r[2].toLocaleString()}</span>`};
+const grp=c=>{const g=c.g,s=[0,1,2,3].map(i=>g.genius[i]+g.smart[i]),d=[0,1,2,3].map(i=>g.stupid[i]+g.worst[i]);return {sL:s[0],sN:s[1],sS:s[2],sM:s[3],dL:d[0],dN:d[1],dS:d[2],dM:d[3],sR:s[0]+s[2]?s[0]/(s[0]+s[2])*100:null,dR:d[0]+d[2]?d[0]/(d[0]+d[2])*100:null}};
+const sig=c=>{const x=grp(c);if(x.sR==null||x.dR==null||c.smTot<1e5||c.duTot<5e4)return 0;if(x.sR>=60&&x.dR<=40)return 1;if(x.sR<=40&&x.dR>=60)return -1;return 0};
+const sigTxt=s=>s>0?'<span class="sig-L">고수 롱</span>':s<0?'<span class="sig-S">고수 숏</span>':'<span class="addr">—</span>';
+const bar=(r,col)=>r==null?'<span class="addr">없음</span>':`<span class="bar" style="background:var(--soft)"><span style="width:${r.toFixed(1)}%;background:${col}"></span></span>롱 ${r.toFixed(0)}%`;
+function sortBy(arr,k,dir){return arr.sort((a,b)=>{const x=a[k]??-Infinity,y=b[k]??-Infinity;return (typeof x==='string'?x.localeCompare(y):x-y)*dir})}
+
+/* ---------- 코인 목록 ---------- */
+let AS={q:'',f:'all',k:'size',dir:-1,n:60};
+function vAssets(){
+  const rows=D.coins.map(c=>{const x=grp(c);return {...c,...x,size:c.smTot+c.duTot,sg:sig(c)}});
+  const big=rows.filter(r=>r.size>=5e5&&r.sg!==0).sort((a,b)=>b.size-a.size)[0]||rows[0];
+  const bx=grp(big);
+  const allS=rows.reduce((a,r)=>[a[0]+r.sL,a[1]+r.sS],[0,0]),allD=rows.reduce((a,r)=>[a[0]+r.dL,a[1]+r.dS],[0,0]);
+  const nSig=rows.filter(r=>r.sg!==0).length;
+  const title=big.sg?`${esc(big.c)}, 고수는 ${bx.sR>=50?'롱':'숏'} ${Math.max(bx.sR,100-bx.sR).toFixed(0)}% · 하수는 ${bx.dR>=50?'롱':'숏'} ${Math.max(bx.dR,100-bx.dR).toFixed(0)}%`:'고수와 하수, 지금 어디에 걸었나';
+  app.innerHTML=`<section class="band"><div class="wrap">
+  <h1>${title}</h1>
+  <p class="sub">하이퍼리퀴드에서 누적으로 크게 번 트레이더(고수)와 크게 잃은 트레이더(하수) ${D.tracked.toLocaleString()}명이 지금 들고 있는 포지션을 코인별로 합쳤습니다. ${when(D.at)} 기준.</p>
+  <div class="kpis">
+   <div class="kpi"><small>고수 쪽 전체 롱 비중</small><b class="pos">${(allS[0]/(allS[0]+allS[1])*100).toFixed(0)}%</b></div>
+   <div class="kpi"><small>하수 쪽 전체 롱 비중</small><b class="neg">${(allD[0]/(allD[0]+allD[1])*100).toFixed(0)}%</b></div>
+   <div class="kpi"><small>고수 쪽 포지션 합계</small><b>${$m(allS[0]+allS[1])}</b></div>
+   <div class="kpi"><small>고수·하수가 엇갈린 코인</small><b>${nSig}개</b></div>
+  </div>
+  <h2>돈이 가장 많이 걸린 코인 18개, 누가 어느 쪽인가</h2>
+  <div class="fig" id="fig" style="min-height:${18*30+40}px"><svg id="dumb" role="img" aria-label="코인별 고수와 하수의 롱 비중"></svg></div>
+  <div class="legend"><span><i class="dot" style="background:var(--sm)"></i>고수 쪽 (초고수+고수)</span><span><i class="dot" style="background:var(--du)"></i>하수 쪽 (하수+호구)</span><span>점선 = 롱·숏 반반</span></div>
+  </div></section>
+  <section class="band" style="padding-top:0"><div class="wrap">
+  <h2>코인 전체</h2>
+  <div class="tools"><input id="q" placeholder="코인 이름 검색 (예: BTC)" value="${esc(AS.q)}" aria-label="코인 검색">
+  ${[['all','전체'],['L','고수 롱·하수 숏'],['S','고수 숏·하수 롱']].map(([k,l])=>`<button class="chip ${AS.f===k?'on':''}" data-f="${k}">${l}</button>`).join('')}</div>
+  <div id="ctab"></div>
+  <p class="note">엇갈린 베팅: 고수 쪽 롱 비중이 60% 이상인데 하수 쪽은 40% 이하면 ‘고수 롱’, 반대면 ‘고수 숏’으로 표시합니다. 고수 쪽 $100K, 하수 쪽 $50K 이상 걸린 코인만 판정합니다. 참고용 지표일 뿐 매매 신호로 검증된 것은 아닙니다.</p>
+  </div></section>`;
+  const svg=document.getElementById('dumb'),top=rows.filter(r=>r.sR!=null&&r.dR!=null).sort((a,b)=>b.size-a.size).slice(0,18);
+  const draw=()=>{if(svg.clientHeight<100||svg.clientWidth<100)return;const W=svg.clientWidth,H=svg.clientHeight,nar=W<520,L=nar?58:84,R=nar?14:30,y0=26,rh=(H-y0-14)/top.length,X=v=>L+(W-L-R)*v/100;
+    let s=`<line x1="${X(50)}" x2="${X(50)}" y1="14" y2="${H-8}" stroke="var(--ink)" stroke-dasharray="3 3" opacity=".5"/>`;
+    for(const v of nar?[0,50,100]:[0,25,50,75,100])s+=`<text x="${X(v)}" y="14" font-size="12" text-anchor="${v===0?'start':v===100?'end':'middle'}" fill="var(--mute)">${v===0?'숏 100%':v===100?'롱 100%':v+'%'}</text>`;
+    top.forEach((r,i)=>{const y=y0+rh*i+rh/2;s+=`<g data-go="asset-${esc(r.c)}" style="cursor:pointer"><rect x="0" y="${y-rh/2}" width="${W}" height="${rh}" fill="transparent"/><line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="var(--rule)"/><text x="${L-10}" y="${y+4}" font-size="13" font-weight="600" text-anchor="end" fill="var(--ink)">${esc(r.c)}</text>
+    <line x1="${X(r.sR)}" x2="${X(r.dR)}" y1="${y}" y2="${y}" stroke="var(--mute)" stroke-width="2"/>
+    <circle cx="${X(r.dR)}" cy="${y}" r="6.5" fill="var(--du)"><title>${esc(r.c)} 하수 쪽 롱 ${r.dR.toFixed(0)}% (${$m(r.dL+r.dS)})</title></circle>
+    <circle cx="${X(r.sR)}" cy="${y}" r="6.5" fill="var(--sm)"><title>${esc(r.c)} 고수 쪽 롱 ${r.sR.toFixed(0)}% (${$m(r.sL+r.sS)})</title></circle></g>`});
+    svg.innerHTML=s};
+  const roA=new ResizeObserver(draw);roA.observe(svg);
+  svg.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g)location.hash=g.dataset.go});
+  const tab=()=>{let r=rows.filter(c=>c.c.toLowerCase().includes(AS.q.toLowerCase())&&(AS.f==='all'||(AS.f==='L'?c.sg>0:c.sg<0)));
+    sortBy(r,AS.k,AS.dir);const tot=r.length;r=r.slice(0,AS.n);
+    const H=[['c','코인'],['px','가격'],['chg','24시간'],['sR','고수 쪽'],['dR','하수 쪽'],['sg','엇갈린 베팅'],['size','집계 포지션'],['oi','미결제약정'],['fund','펀딩비(연환산)']];
+    document.getElementById('ctab').innerHTML=r.length?`<div class="scroll"><table class="stack"><thead><tr>${H.map(([k,l],i)=>`<th data-k="${k}" class="${i>0&&i!==3&&i!==4&&i!==5?'n':''}">${l}${AS.k===k?(AS.dir>0?' ↑':' ↓'):''}</th>`).join('')}</tr></thead><tbody>${r.map(c=>`<tr data-go="asset-${esc(c.c)}" tabindex="0"><td class="coin">${esc(c.c)}</td><td class="n" data-px="${esc(c.c)}">${px(c.px)}</td><td class="n ${cls(c.chg)}">${pct(c.chg,2)}</td><td>${bar(c.sR,'var(--sm)')}</td><td>${bar(c.dR,'var(--du)')}</td><td>${sigTxt(c.sg)}</td><td class="n">${$m(c.size)}</td><td class="n">${$m(c.oi)}</td><td class="n ${cls(c.fund)}">${pct(c.fund*24*365,1)}</td></tr>`).join('')}</tbody></table></div>${tot>AS.n?`<button class="more" id="more">더 보기 (${(tot-AS.n).toLocaleString()}개 남음)</button>`:''}`:'<div class="empty">조건에 맞는 코인이 없습니다.</div>';
+    const m=document.getElementById('more');if(m)m.onclick=()=>{AS.n+=60;tab()};
+    document.querySelectorAll('#ctab th[data-k]').forEach(th=>th.onclick=()=>{const k=th.dataset.k;AS.dir=AS.k===k?-AS.dir:(k==='c'?1:-1);AS.k=k;tab()})};
+  tab();
+  document.getElementById('q').oninput=e=>{AS.q=e.target.value;AS.n=60;tab()};
+  document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{AS.f=b.dataset.f;AS.n=60;document.querySelectorAll('[data-f]').forEach(x=>x.classList.toggle('on',x===b));tab()});
+}
+
+/* ---------- 코인 상세 ---------- */
+function vAsset(name){
+  const c=D.coins.find(x=>x.c===name);
+  if(!c){app.innerHTML=`<div class="band"><div class="wrap empty">${esc(name)} 데이터가 없습니다. <a href="#assets">코인 목록으로</a></div></div>`;return}
+  const x=grp(c),sg=sig(c);let F='all';
+  const card=t=>{const g=c.g[t],tot=g[0]+g[2],r=tot?g[0]/tot*100:0,col=t==='genius'||t==='smart'?'var(--sm)':'var(--du)',lt=t==='genius'||t==='smart'?'var(--smS)':'var(--duS)';
+    return `<div class="card"><h3 class="t-${t==='genius'||t==='worst'?'':t}" style="color:${col}">${TN[t]}</h3><p>${TD[t]}</p>${tot?`<div class="split"><span style="width:${r}%;background:${col}"></span><span style="width:${100-r}%;background:${lt}"></span></div>
+    <div class="row2"><span>롱 ${$m(g[0])} · ${g[1]}명</span><span>숏 ${$m(g[2])} · ${g[3]}명</span></div><div class="row2" style="margin-top:6px"><b>${r>=50?'롱':'숏'} ${Math.max(r,100-r).toFixed(0)}%</b></div>`:'<div class="addr">포지션 없음</div>'}</div>`};
+  const head=sg?`${esc(c.c)}, 고수는 ${x.sR>=50?'롱':'숏'} · 하수는 ${x.dR>=50?'롱':'숏'}`:`${esc(c.c)}, 누가 롱이고 누가 숏인가`;
+  app.innerHTML=`<section class="band"><div class="wrap">
+  <p class="addr"><a href="#assets">← 코인 목록</a></p>
+  <h1>${head}</h1>
+  <p class="sub">${sg?sigTxt(sg)+' · ':''}고수 자금 규모 ${c.smRk}위 · ${when(D.at)} 기준</p>
+  <div class="kpis"><div class="kpi"><small>현재가 (실시간)</small><b data-px="${esc(c.c)}">${px(c.px)}</b></div><div class="kpi"><small>24시간 변동</small><b class="${cls(c.chg)}">${pct(c.chg,2)}</b></div>
+  <div class="kpi"><small>미결제약정</small><b>${$m(c.oi)}</b></div><div class="kpi"><small>펀딩비 (1시간 / 연환산)</small><b class="${cls(c.fund)}">${c.fund.toFixed(4)}% / ${pct(c.fund*24*365,1)}</b></div></div>
+  <div class="cards">${TIERS.map(card).join('')}</div>
+  <h2>큰 포지션 순위</h2>
+  <div class="tools">${[['all','전체'],['s','고수 쪽'],['d','하수 쪽']].map(([k,l])=>`<button class="chip ${k==='all'?'on':''}" data-p="${k}">${l}</button>`).join('')}</div>
+  <div id="ptab"></div>
+  <p class="note">규모 상위 40개만 보여줍니다. 교차 마진 포지션의 청산가는 계좌 전체 잔고로 계산되므로, 같은 계좌의 다른 포지션이 움직이면 함께 바뀝니다.</p>
+  </div></section>`;
+  const tab=()=>{const r=c.top.filter(p=>{const t=D.tr[p[0]][3];return F==='all'||(F==='s'?t==='genius'||t==='smart':t==='stupid'||t==='worst')});
+    document.getElementById('ptab').innerHTML=r.length?`<div class="scroll"><table class="stack"><thead><tr><th>트레이더</th><th>등급</th><th>방향</th><th class="n">레버리지</th><th class="n">평단</th><th class="n">규모</th><th class="n">평가손익</th><th class="n">청산가</th></tr></thead><tbody>${r.map(p=>`<tr data-go="trader-${D.tr[p[0]][0]}"><td>${who(p[0])}</td><td>${tag(D.tr[p[0]][3])}</td><td class="side ${p[1]>0?'L':'S'}">${p[1]>0?'롱':'숏'}</td><td class="n">${p[6]}배</td><td class="n">${px(p[3])}</td><td class="n">${$m(p[4])}</td><td class="n ${cls(p[5])}">${$m(p[5],1)}</td><td class="n">${p[7]?px(p[7]):'—'}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">이 그룹의 포지션이 없습니다.</div>'};
+  tab();document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{F=b.dataset.p;document.querySelectorAll('[data-p]').forEach(y=>y.classList.toggle('on',y===b));tab()});
+}
+
+/* ---------- 트레이더 랭킹 ---------- */
+let TS={q:'',f:'all',n:100,k:2,dir:1};
+function vTraders(){
+  app.innerHTML=`<section class="band"><div class="wrap">
+  <h1>하이퍼리퀴드 트레이더 ${D.total.toLocaleString()}명 수익 순위</h1>
+  <p class="sub">공식 리더보드 전체를 누적 손익 순으로 세우고 네 등급으로 나눴습니다. 아래 표에는 등급에 든 트레이더 중 계좌에 $${D.minAv.toLocaleString()} 이상 남아 있는 ${D.tracked.toLocaleString()}명만 나옵니다.</p>
+  <div class="kpis">${TIERS.map(t=>`<div class="kpi"><small>${TN[t]} · ${TD[t]}</small><b class="${t==='genius'||t==='smart'?'pos':'neg'}">${(D.tierCounts[t]||0).toLocaleString()}명</b></div>`).join('')}</div>
+  <div class="tools"><input id="tq" placeholder="지갑 주소나 닉네임 검색" value="${esc(TS.q)}" aria-label="트레이더 검색">${[['all','전체'],...TIERS.map(t=>[t,TN[t]])].map(([k,l])=>`<button class="chip ${TS.f===k?'on':''}" data-t="${k}">${l}</button>`).join('')}</div>
+  <div id="ttab"></div></div></section>`;
+  const tab=()=>{const q=TS.q.toLowerCase();let r=D.tr.map((t,i)=>[...t,i]).filter(t=>(TS.f==='all'||t[3]===TS.f)&&(!q||t[0].includes(q)||t[1].toLowerCase().includes(q)));
+    r.sort((a,b)=>(a[TS.k]-b[TS.k])*TS.dir);const tot=r.length;r=r.slice(0,TS.n);
+    const H=[[2,'순위'],[null,'트레이더'],[null,'등급'],[4,'누적 손익'],[6,'30일 손익'],[5,'계좌 잔고'],[7,'포지션 수'],[8,'포지션 규모']];
+    document.getElementById('ttab').innerHTML=r.length?`<div class="scroll"><table class="stack"><thead><tr>${H.map(([k,l],i)=>`<th ${k!=null?`data-k="${k}"`:''} class="${i===1||i===2?'':'n'}">${l}${TS.k===k?(TS.dir>0?' ↑':' ↓'):''}</th>`).join('')}</tr></thead><tbody>${r.map(t=>`<tr data-go="trader-${t[0]}" tabindex="0"><td class="n">#${t[2].toLocaleString()}</td><td>${t[1]?esc(t[1])+' <span class="addr">'+short(t[0])+'</span>':short(t[0])}</td><td>${tag(t[3])}</td><td class="n ${cls(t[4])}">${$m(t[4],1)}</td><td class="n ${cls(t[6])}">${$m(t[6],1)}</td><td class="n">${$m(t[5])}</td><td class="n">${t[7]}</td><td class="n">${t[8]?$m(t[8]):'—'}</td></tr>`).join('')}</tbody></table></div>${tot>TS.n?`<button class="more" id="tmore">더 보기 (${(tot-TS.n).toLocaleString()}명 남음)</button>`:''}`:'<div class="empty">찾는 트레이더가 없습니다. 잔고가 $1,000 미만이거나 등급 밖(일반)일 수 있습니다.</div>';
+    const m=document.getElementById('tmore');if(m)m.onclick=()=>{TS.n+=100;tab()};
+    document.querySelectorAll('#ttab th[data-k]').forEach(th=>th.onclick=()=>{const k=+th.dataset.k;TS.dir=TS.k===k?-TS.dir:(k===2?1:-1);TS.k=k;tab()})};
+  tab();
+  document.getElementById('tq').oninput=e=>{TS.q=e.target.value.trim();TS.n=100;tab()};
+  document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{TS.f=b.dataset.t;TS.n=100;document.querySelectorAll('[data-t]').forEach(x=>x.classList.toggle('on',x===b));tab()});
+}
+
+/* ---------- 트레이더 상세 ---------- */
+async function vTrader(addr){
+  if(!T){app.innerHTML='<div class="band"><div class="wrap empty">트레이더 데이터를 불러오는 중…</div></div>';
+    try{await loadT()}catch(e){app.innerHTML='<div class="band"><div class="wrap empty">트레이더 데이터를 불러오지 못했습니다.</div></div>';return}
+    if(location.hash!=='#trader-'+addr)return}
+  const t=TL[addr];
+  if(!t){app.innerHTML=`<div class="band"><div class="wrap empty">이 지갑은 집계 대상이 아닙니다. <a href="#traders">랭킹으로</a></div></div>`;return}
+  const pctl=t.rk/D.total*100,where=pctl<=50?`상위 ${pctl<1?pctl.toFixed(2):pctl.toFixed(1)}%`:`하위 ${(100-pctl+1/D.total*100)<1?(100-pctl).toFixed(2):(100-pctl).toFixed(1)}%`;
+  const cmap={};D.coins.forEach(c=>cmap[c.c]=c.px);
+  const ntl=t.p.reduce((a,p)=>a+p[4],0),up=t.p.reduce((a,p)=>a+p[5],0);
+  app.innerHTML=`<section class="band"><div class="wrap">
+  <p class="addr"><a href="#traders">← 트레이더 랭킹</a></p>
+  <h1>${t.n?esc(t.n):short(t.a)} ${tag(t.t)}</h1>
+  <p class="sub">${esc(t.a)} · 순위 #${t.rk.toLocaleString()} / ${D.total.toLocaleString()} (${where}) · <a href="https://app.hyperliquid.xyz/explorer/address/${esc(t.a)}">하이퍼리퀴드 익스플로러에서 보기</a></p>
+  <div class="kpis"><div class="kpi"><small>누적 손익</small><b class="${cls(t.pa)}">${$m(t.pa,1)}</b></div><div class="kpi"><small>30일 손익</small><b class="${cls(t.pm)}">${$m(t.pm,1)}</b></div>
+  <div class="kpi"><small>7일 / 1일 손익</small><b><span class="${cls(t.pw)}">${$m(t.pw,1)}</span> / <span class="${cls(t.pd)}">${$m(t.pd,1)}</span></b></div>
+  <div class="kpi"><small>계좌 잔고</small><b>${$m(t.av)}</b></div><div class="kpi"><small>누적 거래량</small><b>${$m(t.v)}</b></div></div>
+  <h2>보유 포지션 ${t.p.length}개 · 합계 ${$m(ntl)} · 평가손익 <span class="${cls(up)}">${$m(up,1)}</span></h2>
+  ${t.p.length?`<div class="scroll"><table class="stack"><thead><tr><th>코인</th><th>방향</th><th class="n">레버리지</th><th class="n">평단</th><th class="n">현재가</th><th class="n">규모</th><th class="n">평가손익</th><th class="n">청산가</th><th class="n">청산까지</th></tr></thead><tbody>${t.p.map(p=>{const cur=cmap[p[0]],d=p[7]&&cur?(cur-p[7])/cur*100*p[1]:null;return `<tr ${cur?`data-go="asset-${esc(p[0])}"`:''}><td class="coin">${esc(p[0])}</td><td class="side ${p[1]>0?'L':'S'}">${p[1]>0?'롱':'숏'}</td><td class="n">${p[6]}배 ${p[8]?'교차':'격리'}</td><td class="n">${px(p[3])}</td><td class="n" data-px="${esc(p[0])}">${px(cur)}</td><td class="n">${$m(p[4])}</td><td class="n ${cls(p[5])}">${$m(p[5],1)}</td><td class="n">${p[7]?px(p[7]):'—'}</td><td class="n ${d!=null&&d<10?'neg':''}">${d!=null?d.toFixed(1)+'%':'—'}</td></tr>`}).join('')}</tbody></table></div>`:'<div class="empty">데이터 기준 시각에 보유한 포지션이 없습니다.</div>'}
+  </div></section>`;
+}
+
+/* ---------- 변동·청산 임박 ---------- */
+let MF='all';
+function vMoves(){
+  const A={open:'신규 진입',add:'추가 진입',cut:'일부 정리',close:'전량 정리'};
+  const ok=i=>{const t=D.tr[i][3];return MF==='all'||(MF==='s'?t==='genius'||t==='smart':t==='stupid'||t==='worst')};
+  const feed=D.feed.filter(f=>ok(f[0])),near=D.near.filter(n=>ok(n[0]));
+  const win=D.prevAt?`${when(D.prevAt)} → ${when(D.at)}`:'';
+  app.innerHTML=`<section class="band"><div class="wrap">
+  <h1>최근 고수·하수의 큰 매매와 청산 직전 포지션</h1>
+  <p class="sub">직전 수집과 이번 수집의 포지션을 비교해 $5만 이상 규모의 진입·추가·정리를 골라냈습니다. ${win?'비교 구간 '+win+'.':''} 체결을 즉시 보려면 <a href="#live">실시간 체결</a> 탭을 쓰세요.</p>
+  <div class="tools">${[['all','전체'],['s','고수 쪽'],['d','하수 쪽']].map(([k,l])=>`<button class="chip ${MF===k?'on':''}" data-m="${k}">${l}</button>`).join('')}</div>
+  <div class="grid2"><div><h2>큰 매매 ${feed.length}건</h2>
+  ${feed.length?`<ul class="feed">${feed.slice(0,150).map(f=>`<li>${tag(D.tr[f[0]][3])} ${who(f[0])} <b><a href="#asset-${esc(f[1])}">${esc(f[1])}</a> ${f[3]>0?'롱':'숏'} ${A[f[2]]}</b> <span>${f[2]==='add'||f[2]==='cut'?$m(f[5])+' (현재 '+$m(f[4])+')':$m(f[4])}</span> <span class="addr">평단 ${px(f[6])}</span></li>`).join('')}</ul>`:'<div class="empty">비교 구간에 큰 매매가 없었습니다.</div>'}</div>
+  <div><h2>청산가까지 5% 이내 ${near.length}건</h2>
+  ${near.length?`<div class="scroll"><table class="stack"><thead><tr><th>트레이더</th><th>코인</th><th>방향</th><th class="n">규모</th><th class="n">청산가</th><th class="n">청산까지</th></tr></thead><tbody>${near.slice(0,120).map(n=>`<tr data-go="trader-${D.tr[n[0]][0]}"><td>${who(n[0])}</td><td class="coin">${esc(n[1])}</td><td class="side ${n[2]>0?'L':'S'}">${n[2]>0?'롱':'숏'} ${n[5]}배</td><td class="n">${$m(n[3])}</td><td class="n">${px(n[6])}</td><td class="n neg">${n[7].toFixed(2)}%</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">청산가까지 5% 이내인 $2만 이상 포지션이 없습니다.</div>'}</div></div>
+  </div></section>`;
+  document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{MF=b.dataset.m;vMoves()});
+}
+
+/* ---------- 기준 설명 ---------- */
+function vAbout(){
+  app.innerHTML=`<section class="band"><div class="wrap prose">
+  <h1>산정 기준과 한계</h1>
+  <h2>등급</h2><ul>${TIERS.map(t=>`<li>${tag(t)} ${TD[t]} — 현재 ${(D.tierCounts[t]||0).toLocaleString()}명</li>`).join('')}<li>그 사이(−$100K ~ +$200K)는 ‘일반’으로 보고 집계에서 뺍니다.</li></ul>
+  <p>그래프와 표에서 ‘고수 쪽’은 초고수+고수, ‘하수 쪽’은 하수+호구를 합친 값입니다. 누적 손익은 하이퍼리퀴드 공식 리더보드의 전체 기간 수익입니다. 영어권에서 말하는 스마트 머니(smart money)·덤 머니(dumb money)와 같은 개념입니다.</p>
+  <h2>계산 방법</h2><ul><li>공식 리더보드 ${D.total.toLocaleString()}명을 누적 손익 순으로 세워 순위를 매깁니다.</li><li>등급에 든 트레이더 중 잔고 $${D.minAv.toLocaleString()} 이상인 ${D.tracked.toLocaleString()}명의 계좌를 하나씩 조회해, 보유 중인 무기한 선물 포지션을 모읍니다${D.failed?` (조회 실패 ${D.failed}명 제외)`:''}.</li><li>코인마다 등급별 롱·숏 금액과 인원을 더합니다. 롱 비중은 롱 금액 ÷ (롱 금액 + 숏 금액)입니다.</li><li>하이퍼리퀴드 기본 시장의 코인만 다룹니다. 외부 개발자가 연 시장(HIP-3, 주식·원자재 등)은 빠집니다.</li></ul>
+  <h2>한계</h2><ul><li>코인·트레이더 페이지의 포지션 집계는 깃허브가 30분마다 새로 수집합니다(실제로는 30분~1시간 간격). 마지막 수집은 ${when(D.at)}이고, 한 번 수집에 13분 정도 걸립니다. 가격과 ‘실시간 체결’ 탭은 하이퍼리퀴드에서 바로 받습니다.</li><li>누적 손익은 과거 성적입니다. 고수가 이번에도 맞힌다는 보장은 없습니다.</li><li>한 사람이 지갑을 여러 개 쓰거나, 다른 곳 포지션을 헤지하려고 잡은 포지션일 수 있습니다. 시장조성자(호가 공급 업체) 계좌도 섞여 있을 수 있습니다.</li><li>투자 조언이나 매매 권유가 아닙니다.</li></ul>
+  </div></section>`;
+}
+
+
+/* ---------- 실시간 (웹소켓) ---------- */
+const LS={get(k,d){try{const v=localStorage.getItem('gh_'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('gh_'+k,JSON.stringify(v))}catch(e){}}};
+const LV={ws:null,st:'연결 전',ok:false,mids:{},alerts:[],pend:new Map(),addr:new Map(),pos:null,subs:new Set(),min:LS.get('min',25000),scope:LS.get('scope','top'),f:LS.get('lf','all'),noti:false,net:{s:0,d:0},retry:0,dirty:false,unseen:0};
+let TP=null;
+function loadT(){return TP||(TP=fetch('traders.json').then(r=>{if(!r.ok)throw 0;return r.json()}).then(j=>{T=j;TL={};LV.pos=new Map();T.traders.forEach((t,i)=>{TL[t.a]=t;t.p.forEach(q=>LV.pos.set(i+'|'+q[0],q[1]*q[2]))});return T}).catch(e=>{TP=null;throw e}))}
+function liveCoins(){const cs=D.coins.slice().sort((a,b)=>(b.smTot+b.duTot)-(a.smTot+a.duTot));return (LV.scope==='all'?cs:cs.slice(0,40)).map(c=>c.c)}
+function wsSend(o){try{if(LV.ws&&LV.ws.readyState===1)LV.ws.send(JSON.stringify(o))}catch(e){}}
+function syncSubs(){const want=new Set(liveCoins());let d=0;
+  for(const c of [...LV.subs])if(!want.has(c)){LV.subs.delete(c);setTimeout(()=>wsSend({method:'unsubscribe',subscription:{type:'trades',coin:c}}),d+=25)}
+  for(const c of want)if(!LV.subs.has(c)){LV.subs.add(c);setTimeout(()=>wsSend({method:'subscribe',subscription:{type:'trades',coin:c}}),d+=25)}}
+function stat(){const e=document.getElementById('wsst');if(e){e.textContent=(LV.ok?'● ':'○ ')+LV.st;e.style.color=LV.ok?'var(--sm)':'var(--du)'}const k=document.getElementById('lvst');if(k)k.textContent=LV.st}
+function wsStart(){
+  let ws;try{ws=new WebSocket('wss://api.hyperliquid.xyz/ws')}catch(e){LV.st='연결 불가';stat();return}
+  LV.ws=ws;LV.st='연결 중';LV.ok=false;stat();
+  ws.onopen=()=>{LV.st='실시간 연결됨';LV.ok=true;LV.retry=0;LV.subs.clear();wsSend({method:'subscribe',subscription:{type:'allMids'}});syncSubs();stat()};
+  ws.onmessage=e=>{let m;try{m=JSON.parse(e.data)}catch(x){return}
+    if(m.channel==='allMids'){const x=m.data.mids;for(const k in x)if(k[0]!=='@')LV.mids[k]=+x[k]}
+    else if(m.channel==='trades')for(const t of m.data)onTrade(t)};
+  ws.onclose=()=>{LV.ws=null;LV.ok=false;LV.st='재연결 중';stat();setTimeout(wsStart,Math.min(30000,1000*2**LV.retry++))};
+  ws.onerror=()=>{try{ws.close()}catch(e){}};
+}
+function onTrade(t){const p0=+t.px,sz=+t.sz,u=t.users||[];
+  for(let k=0;k<2;k++){const i=LV.addr.get(String(u[k]||'').toLowerCase());if(i==null)continue;
+    const dir=k===0?1:-1,key=i+'|'+t.coin+'|'+dir;let p=LV.pend.get(key);
+    if(!p){p={i,coin:t.coin,dir,sz:0,ntl:0,at:t.time,last:0};LV.pend.set(key,p)}
+    p.sz+=sz;p.ntl+=sz*p0;p.last=Date.now()}}
+function flush(p){const key=p.i+'|'+p.coin,before=LV.pos?(LV.pos.get(key)||0):null,t=D.tr[p.i][3],g=t==='genius'||t==='smart'?'s':'d';
+  LV.net[g]+=p.dir*p.ntl;
+  let act;
+  if(before==null)act=p.dir>0?'매수':'매도';
+  else{const eps=p.sz*1e-6,after=before+p.dir*p.sz;LV.pos.set(key,after);
+    if(before>eps&&p.dir<0)act=after<-eps?'롱 정리 후 숏 전환':'롱 정리';
+    else if(before<-eps&&p.dir>0)act=after>eps?'숏 정리 후 롱 전환':'숏 정리';
+    else act=p.dir>0?(before>eps?'롱 추가':'롱 진입'):(before<-eps?'숏 추가':'숏 진입')}
+  if(p.ntl<1e4)return;
+  const a={...p,act,avg:p.ntl/p.sz,tier:t,g};LV.alerts.unshift(a);if(LV.alerts.length>500)LV.alerts.pop();
+  if(p.ntl>=LV.min&&(LV.f==='all'||LV.f===g)){LV.dirty=true;if(!location.hash.startsWith('#live'))LV.unseen++;
+    if(LV.noti&&document.hidden){try{new Notification(`${TN[t]} ${p.coin} ${act} ${$m(p.ntl)}`,{body:`평단 ${px(a.avg)} · ${D.tr[p.i][1]||short(D.tr[p.i][0])}`})}catch(e){}}}
+}
+const hms=t=>new Date(t).toLocaleTimeString('ko-KR',{hour12:false});
+function renderLive(){const ul=document.getElementById('lvlist');if(!ul)return;LV.dirty=false;
+  const r=LV.alerts.filter(a=>a.ntl>=LV.min&&(LV.f==='all'||LV.f===a.g)).slice(0,200);
+  ul.innerHTML=r.length?r.map(a=>`<li><span class="addr">${hms(a.at)}</span> ${tag(a.tier)} ${who(a.i)} <b><a href="#asset-${esc(a.coin)}">${esc(a.coin)}</a> ${a.act}</b> <span>${$m(a.ntl)}</span> <span class="addr">평단 ${px(a.avg)}</span></li>`).join(''):`<li class="empty" style="display:block">${LV.ok?'아직 기준 이상 체결이 없습니다. 들어오는 즉시 여기에 표시됩니다.':'하이퍼리퀴드에 연결하는 중입니다…'}</li>`;
+  const s=document.getElementById('lvs'),d=document.getElementById('lvd'),c=document.getElementById('lvc');
+  if(s){s.textContent=$m(LV.net.s,1);s.className=cls(LV.net.s)}if(d){d.textContent=$m(LV.net.d,1);d.className=cls(LV.net.d)}if(c)c.textContent=LV.subs.size+'개'}
+function badge(){const b=document.getElementById('badge');if(b)b.textContent=LV.unseen?` ${LV.unseen>99?'99+':LV.unseen}`:''}
+function vLive(){LV.unseen=0;badge();
+  app.innerHTML=`<section class="band"><div class="wrap">
+  <h1>고수·하수의 체결, 들어오는 대로</h1>
+  <p class="sub">하이퍼리퀴드 실시간 체결 중 고수·하수 지갑 ${D.tr.length.toLocaleString()}개의 체결만 골라 보여줍니다. 잘게 쪼개진 체결은 2.5초 단위로 합칩니다. 진입·정리 구분은 마지막 수집(${when(D.at)}) 포지션을 기준으로 한 추정입니다. 이 페이지를 연 뒤부터 쌓입니다.</p>
+  <div class="kpis"><div class="kpi"><small>연결 상태</small><b id="lvst">${LV.st}</b></div><div class="kpi"><small>고수 쪽 순매수 (연 뒤부터)</small><b id="lvs">$0</b></div><div class="kpi"><small>하수 쪽 순매수 (연 뒤부터)</small><b id="lvd">$0</b></div><div class="kpi"><small>받는 코인</small><b id="lvc">${LV.subs.size}개</b></div></div>
+  <div class="tools">${[['all','전체'],['s','고수 쪽'],['d','하수 쪽']].map(([k,l])=>`<button class="chip ${LV.f===k?'on':''}" data-lf="${k}">${l}</button>`).join('')}
+  <select id="lvmin" aria-label="최소 체결 규모">${[1e4,25e3,1e5,5e5,1e6].map(v=>`<option value="${v}" ${LV.min==v?'selected':''}>${$m(v)} 이상</option>`).join('')}</select>
+  <select id="lvscope" aria-label="받을 코인 범위"><option value="top" ${LV.scope==='top'?'selected':''}>규모 상위 40개 코인</option><option value="all" ${LV.scope==='all'?'selected':''}>전체 코인 (데이터 많이 씀)</option></select>
+  <button class="chip ${LV.noti?'on':''}" id="lvnoti">${LV.noti?'브라우저 알림 켜짐':'브라우저 알림 켜기'}</button></div>
+  <ul class="feed" id="lvlist"></ul>
+  <p class="note">순매수 = 매수 체결 금액 − 매도 체결 금액. 브라우저 알림은 이 탭을 열어 둔 상태에서 다른 창을 보고 있을 때 옵니다. 공식 체결 데이터를 그대로 쓰지만, 진입·정리 표시는 추정이라 틀릴 수 있습니다.</p>
+  </div></section>`;
+  document.querySelectorAll('[data-lf]').forEach(b=>b.onclick=()=>{LV.f=b.dataset.lf;LS.set('lf',LV.f);document.querySelectorAll('[data-lf]').forEach(x=>x.classList.toggle('on',x===b));renderLive()});
+  document.getElementById('lvmin').onchange=e=>{LV.min=+e.target.value;LS.set('min',LV.min);renderLive()};
+  document.getElementById('lvscope').onchange=e=>{LV.scope=e.target.value;LS.set('scope',LV.scope);syncSubs();setTimeout(renderLive,1500)};
+  const nb=document.getElementById('lvnoti');
+  nb.onclick=()=>{if(!('Notification' in window)){nb.textContent='이 브라우저는 알림 미지원';return}
+    if(LV.noti){LV.noti=false;nb.textContent='브라우저 알림 켜기';nb.classList.remove('on');return}
+    Notification.requestPermission().then(p=>{LV.noti=p==='granted';nb.textContent=LV.noti?'브라우저 알림 켜짐':'알림이 차단됨 (브라우저 설정에서 허용)';nb.classList.toggle('on',LV.noti)}).catch(()=>{})};
+  renderLive();
+}
+setInterval(()=>{const now=Date.now();for(const [k,p] of LV.pend)if(now-p.last>2500){LV.pend.delete(k);flush(p)}},1000);
+setInterval(()=>wsSend({method:'ping'}),45000);
+let tick=0;setInterval(()=>{tick++;if(LV.dirty||(tick%4===0&&location.hash==='#live'))renderLive();badge();
+  for(const e of document.querySelectorAll('[data-px]')){const v=LV.mids[e.dataset.px];if(v){const s=px(v);if(e.textContent!==s)e.textContent=s}}},800);
+
+/* ---------- 라우팅 ---------- */
+function ticker(){
+  const rows=D.coins.filter(c=>c.smTot>=3e5).map(c=>({c,x:grp(c),s:sig(c)}));
+  const L=rows.filter(r=>r.s>0).sort((a,b)=>b.c.smTot-a.c.smTot).slice(0,3),S=rows.filter(r=>r.s<0).sort((a,b)=>b.c.smTot-a.c.smTot).slice(0,3);
+  const ml=rows.sort((a,b)=>b.x.sR-a.x.sR)[0];
+  const it=r=>`<a href="#asset-${esc(r.c.c)}"><b>${esc(r.c.c)}</b> <span data-px="${esc(r.c.c)}">${px(r.c.px)}</span></a>`;
+  document.getElementById('ticker').innerHTML=`<span id="wsst">○ 연결 중</span><span>고수 롱·하수 숏 — ${L.map(it).join(' · ')||'없음'}</span><span>고수 숏·하수 롱 — ${S.map(it).join(' · ')||'없음'}</span>${ml?`<span>고수가 가장 롱인 코인 — ${it(ml)} (롱 ${ml.x.sR.toFixed(0)}%)</span>`:''}<span>포지션 ${when(D.at)} 기준</span>`;
+}
+function route(){
+  const h=decodeURIComponent(location.hash.slice(1))||'assets';
+  const base=h.startsWith('asset-')?'assets':h.startsWith('trader-')?'traders':h;
+  document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.r===base));
+  if(h.startsWith('asset-'))vAsset(h.slice(6));else if(h.startsWith('trader-'))vTrader(h.slice(7).toLowerCase());
+  else if(h==='traders')vTraders();else if(h==='live')vLive();else if(h==='moves')vMoves();else if(h==='about')vAbout();else vAssets();
+  window.scrollTo(0,0);
+}
+app.addEventListener('click',e=>{const r=e.target.closest('tr[data-go]');if(r&&!e.target.closest('a'))location.hash=r.dataset.go});
+app.addEventListener('keydown',e=>{const r=e.target.closest('tr[data-go]');if(r&&e.key==='Enter')location.hash=r.dataset.go});
+fetch('data.json').then(r=>r.json()).then(d=>{D=d;D.tr.forEach((t,i)=>LV.addr.set(t[0].toLowerCase(),i));ticker();route();addEventListener('hashchange',route);wsStart();loadT().catch(()=>{})}).catch(()=>{app.innerHTML='<div class="band"><div class="wrap empty">데이터를 불러오지 못했습니다.</div></div>'});
+}
+</script>
+</body>
+</html>

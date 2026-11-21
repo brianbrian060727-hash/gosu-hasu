@@ -1,0 +1,59 @@
+name: 데이터 수집 및 배포
+
+on:
+  schedule:
+    - cron: "7,37 * * * *"   # 30분마다 (GitHub 사정으로 5~20분 늦을 수 있음)
+  workflow_dispatch:          # Actions 탭에서 수동 실행
+  push:
+    branches: [main]
+    paths: ["site/**", "build.py", ".github/workflows/**"]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 직전 데이터 받기 (변동 비교용)
+        run: |
+          curl -sfL -o prev.json "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/traders.json" \
+            && echo "직전 데이터 있음" || echo "직전 데이터 없음 (첫 실행)"
+
+      - name: 하이퍼리퀴드 수집
+        run: python build.py site --prev prev.json
+
+      - name: 결과 점검
+        run: |
+          python - <<'EOF'
+          import json, sys
+          d = json.load(open("site/data.json"))
+          print("tracked", d["tracked"], "coins", len(d["coins"]), "feed", len(d["feed"]), "failed", d["failed"])
+          if d["tracked"] < 3000 or len(d["coins"]) < 50:
+              sys.exit("수집 결과가 비정상적으로 적어 배포하지 않습니다")
+          EOF
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - id: deploy
+        uses: actions/deploy-pages@v4
