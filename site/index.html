@@ -295,9 +295,9 @@ function flush(p){const key=p.i+'|'+p.coin,before=LV.pos?(LV.pos.get(key)||0):nu
   if(p.ntl>=LV.min&&(LV.f==='all'||LV.f===g)){LV.dirty=true;if(!location.hash.startsWith('#live'))LV.unseen++;
     if(LV.noti&&document.hidden){try{new Notification(`${TN[t]} ${p.coin} ${act} ${$m(p.ntl)}`,{body:`평단 ${px(a.avg)} · ${D.tr[p.i][1]||short(D.tr[p.i][0])}`})}catch(e){}}}
 }
-const hms=t=>new Date(t).toLocaleTimeString('ko-KR',{hour12:false});
+const hms=t=>{const d=new Date(t),z=n=>String(n).padStart(2,'0');return z(d.getHours())+':'+z(d.getMinutes())+':'+z(d.getSeconds())};
 function renderLive(){const ul=document.getElementById('lvlist');if(!ul)return;LV.dirty=false;
-  const r=LV.alerts.filter(a=>a.ntl>=LV.min&&(LV.f==='all'||LV.f===a.g)).slice(0,200);
+  const r=LV.alerts.filter(a=>a.ntl>=LV.min&&(LV.f==='all'||LV.f===a.g)).sort((x,y)=>y.at-x.at).slice(0,200);
   ul.innerHTML=r.length?r.map(a=>`<li><span class="addr">${hms(a.at)}</span> ${tag(a.tier)} ${who(a.i)} <b><a href="#asset-${esc(a.coin)}">${esc(a.coin)}</a> ${a.act}</b> <span>${$m(a.ntl)}</span> <span class="addr">평단 ${px(a.avg)}</span></li>`).join(''):`<li class="empty" style="display:block">${LV.ok?'아직 기준 이상 체결이 없습니다. 들어오는 즉시 여기에 표시됩니다.':'하이퍼리퀴드에 연결하는 중입니다…'}</li>`;
   const s=document.getElementById('lvs'),d=document.getElementById('lvd'),c=document.getElementById('lvc');
   if(s){s.textContent=$m(LV.net.s,1);s.className=cls(LV.net.s)}if(d){d.textContent=$m(LV.net.d,1);d.className=cls(LV.net.d)}if(c)c.textContent=LV.subs.size+'개'}
