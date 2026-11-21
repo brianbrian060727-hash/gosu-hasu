@@ -18,12 +18,9 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build-deploy:
+  build:
     runs-on: ubuntu-latest
     timeout-minutes: 40
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -41,19 +38,29 @@ jobs:
 
       - name: 결과 점검
         run: |
-          python - <<'EOF'
+          python - <<'PY'
           import json, sys
           d = json.load(open("site/data.json"))
           print("tracked", d["tracked"], "coins", len(d["coins"]), "feed", len(d["feed"]), "failed", d["failed"])
           if d["tracked"] < 3000 or len(d["coins"]) < 50:
               sys.exit("수집 결과가 비정상적으로 적어 배포하지 않습니다")
-          EOF
+          PY
 
       - uses: actions/configure-pages@v5
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: site
 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: 업로드 반영 대기
+        run: sleep 15
       - id: deploy
         uses: actions/deploy-pages@v4
